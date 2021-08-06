@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-{{ .Chart.Name }}
+  namespace: {{ .Values.deployment.namespace }}
+  labels:
+    app: {{ .Values.deployment.app }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.deployment.app }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 33%
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.deployment.app }}
+    spec:
+      containers:
+        - name: {{ .Values.deployment.capp }}
+          image: filipemotta/flask-app:{{ .Values.deployment.image.tag }}
+          ports:
+            - containerPort: {{ .Values.deployment.cport }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.deployment.cport }}
+            initialDelaySeconds: 2
+            periodSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.deployment.cport }}
+            initialDelaySeconds: 2
+            periodSeconds: 2

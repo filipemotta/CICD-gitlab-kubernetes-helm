@@ -1,0 +1,32 @@
+deployment:
+   name: flask-app
+   namespace: default
+   app: prod
+   capp: c-flask-app
+   cport: 5000
+   replicas: 3
+   image.tag: latest 
+
+service:
+  type: LoadBalancer
+  ports:
+      port: 80
+      targetPort: 5000
+
+podnotfound:
+    labels:
+      run: nginx-page-not-found
+    name: nginx-page-not-found
+    image: nginx:latest
+
+svcnotfound:
+  labels:
+      run: nginx-page-not-found
+  name: service-page-not-found
+  port: 80
+
+
+ingress:
+  host: gitlab.filipemotta.me
+  
+
